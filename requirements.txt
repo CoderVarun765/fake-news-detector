@@ -4,3 +4,4 @@ torch
 wikipedia
 google-genai
 requests
+gunicorn
