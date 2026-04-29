@@ -1,0 +1,2 @@
+GEMINI_API_KEY = "AIzaSyDai3RskeV3FRah-qSh4vrAO_Lj9LuTIo4"
+SERP_API_KEY= "52d81001822fe4f1f6aadda4fb2a7f02a8f0f3d42cafec30bb2eab24964f6ab2"

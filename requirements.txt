@@ -1,0 +1,6 @@
+flask
+transformers
+torch
+wikipedia
+google-genai
+requests

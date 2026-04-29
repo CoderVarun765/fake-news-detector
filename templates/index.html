@@ -1,0 +1,171 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Fake News Detection</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gradient-to-br from-[#0B1A2B] to-[#020617] text-white min-h-screen flex flex-col items-center justify-center px-4">
+
+<!-- TITLE -->
+<h1 class="text-4xl font-bold mb-6"> Fake News Detection</h1>
+
+<!-- INPUT -->
+<div class="w-full max-w-2xl">
+    <textarea id="newsInput"
+        class="w-full p-4 rounded-lg bg-gray-200 text-black focus:outline-none focus:ring-2 focus:ring-green-400"
+        rows="4"
+        placeholder="Enter news headline..."></textarea>
+
+    <button onclick="analyzeNews()"
+        class="mt-4 w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:scale-105 transition duration-200 p-3 rounded-lg font-semibold">
+        Analyze
+    </button>
+</div>
+
+<!-- LOADING -->
+<div id="loading" class="mt-4 hidden">
+    <p class="text-yellow-400 animate-pulse">Analyzing...</p>
+</div>
+
+<!-- RESULT -->
+<div id="resultCard" class="mt-10 w-full max-w-5xl hidden space-y-6">
+
+    <!-- VERDICT BADGE -->
+    <div class="flex flex-col items-center">
+        <span id="resultLabel"
+            class="px-6 py-2 rounded-full text-lg font-semibold shadow-lg"></span>
+
+        <p class="text-gray-400 text-sm mt-2">
+            Decision is based on headline analysis by RAG + AI model
+        </p>
+    </div>
+
+    <!-- CONFIDENCE BAR -->
+    <div>
+        <div class="text-center text-sm mb-1 text-gray-400">
+            Model Confidence (reference only)
+        </div>
+
+        <div class="w-full bg-gray-700 rounded-full h-4 overflow-hidden">
+            <div id="confidenceBar"
+                class="h-4 rounded-full transition-all duration-700 ease-in-out bg-blue-500"
+                style="width: 0%">
+            </div>
+        </div>
+
+        <p class="text-center mt-2 text-sm text-gray-300">
+            Confidence: <span id="confidence"></span>
+        </p>
+    </div>
+
+    <!-- CARDS -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <!-- EXPLANATION -->
+        <div class="bg-[#1E293B]/80 backdrop-blur-lg border border-gray-700 p-5 rounded-xl shadow-lg hover:scale-[1.02] transition">
+            <h3 class="font-semibold text-lg mb-2">🧾 Explanation</h3>
+            <p id="explanation" class="text-gray-300 whitespace-pre-line leading-relaxed"></p>
+        </div>
+
+        <!-- CORRECT INFO -->
+        <div class="bg-[#1E293B]/80 backdrop-blur-lg border border-gray-700 p-5 rounded-xl shadow-lg hover:scale-[1.02] transition">
+            <h3 class="font-semibold text-lg mb-2">✅ Correct Information</h3>
+            <p id="correctInfo" class="text-gray-300 whitespace-pre-line leading-relaxed"></p>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+function typeEffect(element, text, speed = 8) {
+    element.innerHTML = "";
+    let i = 0;
+
+    function typing() {
+        if (i < text.length) {
+            element.innerHTML += text.charAt(i);
+            i++;
+            setTimeout(typing, speed);
+        }
+    }
+
+    typing();
+}
+
+async function analyzeNews() {
+    const text = document.getElementById("newsInput").value;
+
+    if (!text.trim()) {
+        alert("Enter a headline");
+        return;
+    }
+
+    document.getElementById("loading").classList.remove("hidden");
+    document.getElementById("resultCard").classList.add("hidden");
+
+    const res = await fetch("/predict", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ text })
+    });
+
+    const data = await res.json();
+
+    document.getElementById("loading").classList.add("hidden");
+    document.getElementById("resultCard").classList.remove("hidden");
+
+    // 🎯 VERDICT BADGE
+    const label = document.getElementById("resultLabel");
+    label.innerText = "Verdict: " + data.prediction;
+
+    label.className = "px-6 py-2 rounded-full text-lg font-semibold shadow-lg";
+
+    if (data.prediction === "Real") {
+        label.classList.add("bg-green-500", "text-white");
+    } else if (data.prediction === "Fake") {
+        label.classList.add("bg-red-500", "text-white");
+    } else {
+        label.classList.add("bg-yellow-400", "text-black");
+    }
+
+    // 📊 CONFIDENCE
+    const confidence = (data.confidence * 100).toFixed(2);
+    document.getElementById("confidence").innerText = confidence + "%";
+
+    const bar = document.getElementById("confidenceBar");
+    bar.style.width = confidence + "%";
+    bar.className = "h-4 rounded-full transition-all duration-700 ease-in-out bg-blue-500";
+
+    // 🔥 CLEAN PARSING
+    const output = data.verification;
+
+    let explanation = "";
+    let correctInfo = "";
+
+    let explanationMatch = output.match(/Explanation:\s*([\s\S]*?)Correct Information:/);
+    let correctMatch = output.match(/Correct Information:\s*([\s\S]*)/);
+
+    if (explanationMatch) {
+        explanation = explanationMatch[1].trim();
+    } else {
+        explanation = "No explanation available";
+    }
+
+    if (correctMatch) {
+        correctInfo = correctMatch[1].trim();
+    } else {
+        correctInfo = "Not enough information";
+    }
+
+    // ⌨️ Typing effect
+    typeEffect(document.getElementById("explanation"), explanation);
+    typeEffect(document.getElementById("correctInfo"), correctInfo);
+}
+</script>
+
+</body>
+</html>
