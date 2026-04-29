@@ -66,13 +66,13 @@
 
         <!-- EXPLANATION -->
         <div class="bg-[#1E293B]/80 backdrop-blur-lg border border-gray-700 p-5 rounded-xl shadow-lg hover:scale-[1.02] transition">
-            <h3 class="font-semibold text-lg mb-2">🧾 Explanation</h3>
+            <h3 class="font-semibold text-lg mb-2"> Explanation</h3>
             <p id="explanation" class="text-gray-300 whitespace-pre-line leading-relaxed"></p>
         </div>
 
         <!-- CORRECT INFO -->
         <div class="bg-[#1E293B]/80 backdrop-blur-lg border border-gray-700 p-5 rounded-xl shadow-lg hover:scale-[1.02] transition">
-            <h3 class="font-semibold text-lg mb-2">✅ Correct Information</h3>
+            <h3 class="font-semibold text-lg mb-2"> Correct Information</h3>
             <p id="correctInfo" class="text-gray-300 whitespace-pre-line leading-relaxed"></p>
         </div>
 
@@ -118,7 +118,7 @@ async function analyzeNews() {
     document.getElementById("loading").classList.add("hidden");
     document.getElementById("resultCard").classList.remove("hidden");
 
-    // 🎯 VERDICT BADGE
+
     const label = document.getElementById("resultLabel");
     label.innerText = "Verdict: " + data.prediction;
 
@@ -132,7 +132,7 @@ async function analyzeNews() {
         label.classList.add("bg-yellow-400", "text-black");
     }
 
-    // 📊 CONFIDENCE
+
     const confidence = (data.confidence * 100).toFixed(2);
     document.getElementById("confidence").innerText = confidence + "%";
 
@@ -140,7 +140,7 @@ async function analyzeNews() {
     bar.style.width = confidence + "%";
     bar.className = "h-4 rounded-full transition-all duration-700 ease-in-out bg-blue-500";
 
-    // 🔥 CLEAN PARSING
+   
     const output = data.verification;
 
     let explanation = "";

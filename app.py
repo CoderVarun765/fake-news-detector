@@ -20,13 +20,13 @@ def predict():
     if not text:
         return jsonify({"error": "Please enter a valid headline"})
 
-    # 🔹 Classifier (just hint)
+    # Classifier 
     result = predict_news(text)
 
-    # 🔹 Important words
+    # Important words
     words = get_important_words(text)
 
-    # 🔹 Retrieval (optional support)
+    # Retrieval 
     query = build_query(text)
 
     context = get_fact_check(query)
@@ -34,10 +34,10 @@ def predict():
     if isinstance(context, list):
         context = " ".join(context) 
 
-    # 🔹 FINAL LLM decision
+    #  LLM decision
     verification = verify_news(text, context)
 
-    # 🔥 Extract verdict safely
+    
     if "Verdict: TRUE" in verification:
         final_prediction = "Real"
     elif "Verdict: FALSE" in verification:
