@@ -1,3 +1,5 @@
+from dotenv import load_dotenv
+load_dotenv()
 from flask import Flask, request, jsonify, render_template
 from services.classifier import predict_news
 from services.explainability import get_important_words
