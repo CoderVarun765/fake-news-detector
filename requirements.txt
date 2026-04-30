@@ -6,3 +6,4 @@ google-genai
 requests
 gunicorn
 python-dotenv
+google-search-results
