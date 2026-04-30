@@ -7,3 +7,6 @@ requests
 gunicorn
 python-dotenv
 google-search-results
+textblob
+serpapi
+google-generativeai
